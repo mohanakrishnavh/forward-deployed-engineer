@@ -4,7 +4,7 @@ This is a plain-English walk through the Transformer. It follows the same order 
 
 > **Reading order in this chapter:** 1) [The Transformer by Example](01-transformer-by-example.md), 2) this page, 3) ["Attention Is All You Need" explained](03-attention-is-all-you-need-explained.md). Every section below ends with a **worked example** with small numbers.
 >
-> **How to read this page.** Each step has three parts: **Analogy**, **The real idea**, and a **picture**. If you only want the big idea, read the ELI5 parts.
+> **How to read this page.** Each step has three parts: **Analogy**, **The real idea**, and a **picture**. If you only want the big idea, read the Analogy parts.
 
 ## Contents
 
