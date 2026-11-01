@@ -6,7 +6,7 @@ My study notes for becoming a Forward Deployed Engineer (FDE) who builds with ge
 
 Each chapter has its own folder under `chapters/`, with a `README.md` that has the same shape:
 
-1. **In plain words** - a short summary in simple English.
+1. **In plain words** - a short, clear summary.
 2. The main ideas, with tables and diagrams.
 3. **Picture it** - extra visuals (diagrams and examples) to make the idea stick.
 4. **Key points to remember** and **Interview angles**.

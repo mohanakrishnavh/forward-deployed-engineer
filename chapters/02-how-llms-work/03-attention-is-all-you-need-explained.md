@@ -1,12 +1,12 @@
-# 3. "Attention Is All You Need" Explained Simply
+# 3. "Attention Is All You Need" Explained
 
 This page explains the research paper [Attention Is All You Need](https://arxiv.org/abs/1706.03762) (Vaswani, Shazeer, Parmar, Uszkoreit, Jones, Gomez, Kaiser and Polosukhin, 2017). It is the paper that introduced the **Transformer**, the design behind today's large language models.
 
-It follows the paper's own section order, in plain words, with pictures and ELI5 ("explain like I am five") parts. All words and diagrams here are written from scratch. Read the first two pages in this chapter before this one if you can: they show how the model computes things.
+It follows the paper's own section order, in plain words, with pictures and everyday analogies. All words and diagrams here are written from scratch. Read the first two pages in this chapter before this one if you can: they show how the model computes things.
 
 > **Reading order in this chapter:** 1) [The Transformer by Example](01-transformer-by-example.md), 2) [The Illustrated Transformer, step by step](02-illustrated-transformer-explained.md), 3) this page. Every section below has a **worked example**.
 >
-> **How to read this page.** Each section has **ELI5**, **The real idea** and a **picture**. If you are short on time, read only the ELI5 parts and the one-page summary at the end.
+> **How to read this page.** Each section has **Analogy**, **The real idea** and a **picture**. If you are short on time, read only the Analogy parts and the one-page summary at the end.
 
 ## Contents
 
@@ -26,7 +26,7 @@ It follows the paper's own section order, in plain words, with pictures and ELI5
 
 ## 1. The story in one minute
 
-**ELI5.** Before this paper, computers read a sentence like a child reading with a finger: **one word at a time, left to right**. That is slow, and by the end of a long sentence the child may forget the start. The authors said: "Let the computer look at **all the words at once** and decide which words matter to each other." That trick is called **attention**. They built a whole model from it and it was faster and better.
+**Analogy.** Before this paper, computers read a sentence like a child reading with a finger: **one word at a time, left to right**. That is slow, and by the end of a long sentence the child may forget the start. The authors said: "Let the computer look at **all the words at once** and decide which words matter to each other." That trick is called **attention**. They built a whole model from it and it was faster and better.
 
 ```mermaid
 flowchart LR
@@ -69,7 +69,7 @@ On a GPU that has thousands of small workers, the second way keeps them all busy
 
 ## 2. Introduction: what was wrong before
 
-**ELI5.** Imagine passing a secret message down a line of 100 kids. Each kid whispers to the next. By kid 100 the message is changed, and the whole line has to wait for each kid in turn. That is how older models (RNNs, LSTMs, GRUs) worked.
+**Analogy.** Imagine passing a secret message down a line of 100 kids. Each kid whispers to the next. By kid 100 the message is changed, and the whole line has to wait for each kid in turn. That is how older models (RNNs, LSTMs, GRUs) worked.
 
 **The real idea.**
 
@@ -132,7 +132,7 @@ xychart-beta
 
 ## 4. Model architecture
 
-**ELI5.** A translation office with two teams. The **reader team** (encoder) reads the input sentence and writes notes. The **writer team** (decoder) uses the notes to write the answer, **one word at a time**, and each new word can use the words already written.
+**Analogy.** A translation office with two teams. The **reader team** (encoder) reads the input sentence and writes notes. The **writer team** (decoder) uses the notes to write the answer, **one word at a time**, and each new word can use the words already written.
 
 ### 4.1 Encoder and decoder stacks
 
@@ -160,7 +160,7 @@ flowchart LR
 
 ### 4.2 Attention
 
-**ELI5.** Library idea: you hold a **question** (Query). Every book has a **label** (Key) and **contents** (Value). Match your question to the labels, then read the best books' contents.
+**Analogy.** Library idea: you hold a **question** (Query). Every book has a **label** (Key) and **contents** (Value). Match your question to the labels, then read the best books' contents.
 
 **The real idea.** Attention takes a query and a set of key-value pairs and returns a **weighted sum of the values**. The weights come from how well the query matches each key.
 
@@ -193,7 +193,7 @@ flowchart LR
 
 #### Multi-head attention
 
-**ELI5.** One pair of eyes sees one thing. Eight pairs of eyes see eight things.
+**Analogy.** One pair of eyes sees one thing. Eight pairs of eyes see eight things.
 
 **The real idea.** Instead of one big attention, the model runs **h = 8** smaller attentions in parallel. Each head has its own learned tables that squeeze Q, K and V down to **64** numbers (`d_k = d_v = 512 / 8`). The 8 results are glued together and passed through one more table (`W^O`). Because each head is small, the **total cost is about the same** as one full-size head, but the model gets several different views.
 
@@ -219,7 +219,7 @@ flowchart TD
 
 ### 4.3 Feed-forward network
 
-**ELI5.** After the words talk, each one goes into a private thinking room to work on what it heard.
+**Analogy.** After the words talk, each one goes into a private thinking room to work on what it heard.
 
 A small two-layer network is applied to each position separately: `FFN(x) = max(0, x W1 + b1) W2 + b2`. It goes from 512 numbers up to **2048** and back down to 512. The `max(0, ...)` part is called ReLU: it turns negative numbers into zero. Each layer has its own weights.
 
@@ -232,7 +232,7 @@ A small two-layer network is applied to each position separately: `FFN(x) = max(
 
 ### 4.5 Positional encoding
 
-**ELI5.** "Dog bites man" and "man bites dog" use the same words but mean different things. Attention itself has no sense of order, so each word gets a **position sticker**.
+**Analogy.** "Dog bites man" and "man bites dog" use the same words but mean different things. Attention itself has no sense of order, so each word gets a **position sticker**.
 
 **The real idea.** A position vector is **added** to each word embedding. The paper uses fixed sine and cosine waves of many speeds:
 
@@ -379,7 +379,7 @@ xychart-beta
 
 ## 6. Training
 
-**ELI5.** Show the model millions of sentence pairs (input and the right translation). It guesses, checks, and adjusts its numbers. It does this many thousands of times.
+**Analogy.** Show the model millions of sentence pairs (input and the right translation). It guesses, checks, and adjusts its numbers. It does this many thousands of times.
 
 | Item | English to German | English to French |
 |---|---|---|
@@ -417,7 +417,7 @@ xychart-beta
 
 ### Regularization (ways to stop memorizing)
 
-| Trick | Setting | ELI5 |
+| Trick | Setting | Plain meaning |
 |---|---|---|
 | Residual dropout | 0.1 (base model) | Randomly switch off some numbers during training so the model cannot lean on any one of them |
 | Label smoothing | 0.1 | Do not be 100% sure of the right answer. The model becomes less over-confident. It lowers the sharpness (perplexity) score a little, but helps translation quality |
@@ -599,7 +599,7 @@ timeline
 
 ### Glossary
 
-| Word | Simple meaning |
+| Word | Meaning |
 |---|---|
 | Sequence transduction | Turning one sequence into another (for example English to German) |
 | Recurrent (RNN, LSTM, GRU) | Reads one word at a time, passing a memory forward |

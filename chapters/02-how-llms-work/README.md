@@ -2,7 +2,7 @@
 
 > **In plain words:** An LLM reads text as small pieces called tokens. It turns each token into numbers, lets the tokens look at each other (attention), and then guesses the next token. It repeats this again and again to write a full answer.
 
-> **Go deeper, in this order:** 1) [The Transformer by Example](01-transformer-by-example.md) (one sentence, small numbers, pictures), 2) [The Illustrated Transformer, step by step](02-illustrated-transformer-explained.md), 3) ["Attention Is All You Need" explained simply](03-attention-is-all-you-need-explained.md).
+> **Go deeper, in this order:** 1) [The Transformer by Example](01-transformer-by-example.md) (one sentence, small numbers, pictures), 2) [The Illustrated Transformer, step by step](02-illustrated-transformer-explained.md), 3) ["Attention Is All You Need" explained](03-attention-is-all-you-need-explained.md).
 
 ## Core idea: an LLM predicts the next token
 

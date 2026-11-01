@@ -1,10 +1,10 @@
-# 2. The Illustrated Transformer, Step by Step (in Simple Words)
+# 2. The Illustrated Transformer, Step by Step
 
 This is a plain-English walk through the Transformer. It follows the same order as Jay Alammar's famous article, [The Illustrated Transformer](https://jalammar.github.io/illustrated-transformer/). Read that article for the original pictures. Here the words, diagrams and examples are written again from scratch so that a beginner can follow.
 
-> **Reading order in this chapter:** 1) [The Transformer by Example](01-transformer-by-example.md), 2) this page, 3) ["Attention Is All You Need" explained simply](03-attention-is-all-you-need-explained.md). Every section below ends with a **worked example** with small numbers.
+> **Reading order in this chapter:** 1) [The Transformer by Example](01-transformer-by-example.md), 2) this page, 3) ["Attention Is All You Need" explained](03-attention-is-all-you-need-explained.md). Every section below ends with a **worked example** with small numbers.
 >
-> **How to read this page.** Each step has three parts: **ELI5** (like you are five), **The real idea**, and a **picture**. If you only want the big idea, read the ELI5 parts.
+> **How to read this page.** Each step has three parts: **Analogy**, **The real idea**, and a **picture**. If you only want the big idea, read the ELI5 parts.
 
 ## Contents
 
@@ -27,7 +27,7 @@ This is a plain-English walk through the Transformer. It follows the same order 
 
 ## 1. The big picture
 
-**ELI5.** Imagine a translation office with two rooms. In the first room, a team **reads** a French sentence and writes notes about what it means. In the second room, another team uses those notes to **write** the English sentence, one word at a time.
+**Analogy.** Imagine a translation office with two rooms. In the first room, a team **reads** a French sentence and writes notes about what it means. In the second room, another team uses those notes to **write** the English sentence, one word at a time.
 
 **The real idea.** The original Transformer was made for translation. It has two parts:
 
@@ -92,7 +92,7 @@ flowchart LR
 
 ## 2. Words become numbers
 
-**ELI5.** Computers cannot read words. So we give every word a **secret code made of numbers**, like a nickname card. Words with similar meaning get similar cards.
+**Analogy.** Computers cannot read words. So we give every word a **secret code made of numbers**, like a nickname card. Words with similar meaning get similar cards.
 
 **The real idea.**
 
@@ -125,7 +125,7 @@ Three words in, a table of **3 rows x 4 columns** out (in the real model: 3 rows
 
 ## 3. Adding word order (positional encoding)
 
-**ELI5.** If I shuffle the words "dog bites man" into "man bites dog", the meaning changes a lot. The model must know **who comes first**. So we stick a small **position sticker** on each word card: "I am word 1", "I am word 2", and so on.
+**Analogy.** If I shuffle the words "dog bites man" into "man bites dog", the meaning changes a lot. The model must know **who comes first**. So we stick a small **position sticker** on each word card: "I am word 1", "I am word 2", and so on.
 
 **The real idea.**
 
@@ -171,7 +171,7 @@ Real sticker values for a 4-number sticker:
 
 ## 4. Self-attention: the heart of the Transformer
 
-**ELI5.** Read this sentence:
+**Analogy.** Read this sentence:
 
 > "The animal did not cross the street because **it** was too tired."
 
@@ -225,7 +225,7 @@ flowchart TD
   S5 --> S6["6. Add them up = new vector for this word"]
 ```
 
-In simple words:
+In short:
 
 1. **Make Q, K, V** for each word.
 2. **Score** every word: how well does my question match its label? (A *dot product* is just "multiply matching numbers and add them". Bigger means a better match.)
@@ -337,7 +337,7 @@ xychart-beta
 
 ## 6. Self-attention for all words at once
 
-**ELI5.** Instead of one kid doing the math word by word, the whole class does it **at the same time** using a big table.
+**Analogy.** Instead of one kid doing the math word by word, the whole class does it **at the same time** using a big table.
 
 **The real idea.** In real code we do not loop over words. We stack all the word vectors into a table (a *matrix*) **X**, with one row per word.
 
@@ -391,7 +391,7 @@ Read the row "drank": it looks mostly (55%) at "cat", the one doing the drinking
 
 ## 7. Many heads (multi-head attention)
 
-**ELI5.** One pair of eyes may look at one thing only. Eight pairs of eyes can look at **eight different things**. One pair may watch "who did it?", another may watch "what happened?", another may watch "when?".
+**Analogy.** One pair of eyes may look at one thing only. Eight pairs of eyes can look at **eight different things**. One pair may watch "who did it?", another may watch "what happened?", another may watch "when?".
 
 **The real idea.** The model does the attention calculation **8 times**, each with its **own** set of Q, K, V weight tables. Each run is called a *head*. Why?
 
@@ -441,7 +441,7 @@ flowchart LR
 
 ## 8. Residual connections and layer norm
 
-**ELI5.** Imagine copying a drawing through 12 tracing papers. By the end it may be blurry. A **shortcut** lets the original drawing travel along the side, so you never lose it. Then a **tidy-up step** keeps all the numbers in a neat size range.
+**Analogy.** Imagine copying a drawing through 12 tracing papers. By the end it may be blurry. A **shortcut** lets the original drawing travel along the side, so you never lose it. Then a **tidy-up step** keeps all the numbers in a neat size range.
 
 **The real idea.** Around **every** sub-layer (self-attention and feed-forward), two things happen:
 
@@ -477,7 +477,7 @@ Even if the sub-layer made a big mistake, the original x is still inside the sum
 
 ## 9. The feed-forward layer
 
-**ELI5.** After the words have talked to each other (attention), each word goes to a small **private thinking room** to process what it just heard. Every word uses the **same room design**, but goes in alone.
+**Analogy.** After the words have talked to each other (attention), each word goes to a small **private thinking room** to process what it just heard. Every word uses the **same room design**, but goes in alone.
 
 **The real idea.** A small neural network is applied to **each position separately**, with the same weights for every position. Words do not mix here. Mixing happens only in attention.
 
@@ -509,7 +509,7 @@ In the real model: **512 in, 2048 in the middle, 512 out**. That is 512 x 2048 +
 
 ## 10. The decoder
 
-**ELI5.** The decoder is the **writer**. It writes the answer **one word at a time**. For each new word it does two things: (1) it re-reads what it has written so far, and (2) it peeks at the reader team's notes (the encoder output).
+**Analogy.** The decoder is the **writer**. It writes the answer **one word at a time**. For each new word it does two things: (1) it re-reads what it has written so far, and (2) it peeks at the reader team's notes (the encoder output).
 
 ### How the encoder hands over its notes
 
@@ -584,7 +584,7 @@ flowchart TD
 
 ## 11. Picking the word: linear + softmax
 
-**ELI5.** At the end, the decoder has a number list but we need a **word**. Think of a scoreboard with one box for every word in the dictionary. The model gives each word a score. We turn scores into percentages. We pick the word with the highest percentage.
+**Analogy.** At the end, the decoder has a number list but we need a **word**. Think of a scoreboard with one box for every word in the dictionary. The model gives each word a score. We turn scores into percentages. We pick the word with the highest percentage.
 
 **The real idea.**
 
@@ -624,7 +624,7 @@ xychart-beta
 
 ## 12. How the model learns (training)
 
-**ELI5.** A student takes a quiz. The teacher knows the right answer. The student sees how wrong they were and adjusts their thinking. They repeat this a very large number of times until they get good.
+**Analogy.** A student takes a quiz. The teacher knows the right answer. The student sees how wrong they were and adjusts their thinking. They repeat this a very large number of times until they get good.
 
 **The real idea.** Training runs the same steps as above, but we **know the correct answer**, so we can measure the error.
 
@@ -747,7 +747,7 @@ Words become number lists and get a position sticker. In **self-attention**, eve
 
 ### Glossary
 
-| Word | Simple meaning |
+| Word | Meaning |
 |---|---|
 | Token / word piece | A small chunk of text the model reads |
 | Embedding | A list of numbers that stands for a word's meaning |
@@ -772,4 +772,4 @@ Words become number lists and get a position sticker. In **self-attention**, eve
 - [Attention Is All You Need (2017)](https://arxiv.org/abs/1706.03762) - the research paper.
 - [The Annotated Transformer (Harvard NLP)](https://nlp.seas.harvard.edu/annotated-transformer/) - the paper with working code, line by line.
 - [Hugging Face: How to generate text](https://huggingface.co/blog/how-to-generate) - greedy, beam search and sampling.
-- [Back to chapter 2](README.md) · Next: ["Attention Is All You Need" explained simply](03-attention-is-all-you-need-explained.md)
+- [Back to chapter 2](README.md) · Next: ["Attention Is All You Need" explained](03-attention-is-all-you-need-explained.md)

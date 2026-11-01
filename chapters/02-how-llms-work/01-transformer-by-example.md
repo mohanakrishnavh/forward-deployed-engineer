@@ -31,7 +31,7 @@ Contents: [1 Tokens](#1-split-the-sentence-into-tokens) · [2 Numbers](#2-each-t
 
 ## 1. Split the sentence into tokens
 
-**ELI5.** Break a long chocolate bar into small squares. The model eats **one square (token)** at a time. Most squares are whole words. Long or rare words are cut into pieces.
+**Analogy.** Break a long chocolate bar into small squares. The model eats **one square (token)** at a time. Most squares are whole words. Long or rare words are cut into pieces.
 
 ```text
 Sentence:  The cat drank the milk because it was thirsty .
@@ -51,7 +51,7 @@ Notice: "thirsty" was cut into `thirst` + `y`. That is normal. Each token then g
 
 ## 2. Each token becomes a list of numbers
 
-**ELI5.** Every word gets a **score card** with a few traits. Similar words get similar score cards. Think of a video game character card: strength, speed, magic, and so on.
+**Analogy.** Every word gets a **score card** with a few traits. Similar words get similar score cards. Think of a video game character card: strength, speed, magic, and so on.
 
 Imagine our toy card has just **4 traits**:
 
@@ -89,7 +89,7 @@ quadrantChart
 
 ## 3. Add position stickers
 
-**ELI5.** Put the words "dog bites man" in a bag and shake it. You lose who bit whom! So each word gets a sticker: "I am number 0", "I am number 1", and so on.
+**Analogy.** Put the words "dog bites man" in a bag and shake it. You lose who bit whom! So each word gets a sticker: "I am number 0", "I am number 1", and so on.
 
 The paper makes each sticker from sine and cosine waves. Here are real values for a 4-number sticker:
 
@@ -123,7 +123,7 @@ flowchart LR
 
 This is the main event.
 
-**ELI5.** Everyone in a classroom has a **question card** (Query), a **name tag** (Key) and a **backpack of knowledge** (Value). The word "it" holds up its question: "Who am I talking about?" It checks every name tag. The best match shares what is in their backpack.
+**Analogy.** Everyone in a classroom has a **question card** (Query), a **name tag** (Key) and a **backpack of knowledge** (Value). The word "it" holds up its question: "Who am I talking about?" It checks every name tag. The best match shares what is in their backpack.
 
 ### Step A: each word makes three small lists
 
@@ -216,7 +216,7 @@ Without the division, big scores make softmax act like a hard switch. Take three
 
 ## 5. The no-peeking rule (mask)
 
-**ELI5.** In a spelling test, you must not look at the answers on the next line. When the model **writes** a sentence, it must not look at the words it has not written yet.
+**Analogy.** In a spelling test, you must not look at the answers on the next line. When the model **writes** a sentence, it must not look at the words it has not written yet.
 
 We hide the future by giving those scores a value of "minus infinity". After softmax, that becomes exactly 0%.
 
@@ -243,7 +243,7 @@ The model reads the **whole question** with free looking (encoder), but writes t
 
 ## 6. Many heads, many views
 
-**ELI5.** To understand a story, one friend watches **who** is doing things, another watches **what** is happening, a third watches **when**. Then they combine notes.
+**Analogy.** To understand a story, one friend watches **who** is doing things, another watches **what** is happening, a third watches **when**. Then they combine notes.
 
 The paper uses **8 heads**. Each has its own tables, so each head pays attention to something different. Below are made-up attention patterns for the word **"it"** in three heads (higher % = more attention):
 
@@ -273,7 +273,7 @@ flowchart TD
 
 ## 7. The feed-forward step
 
-**ELI5.** After the class discussion (attention), each student goes to their desk and **thinks alone** about what they heard. Everyone follows the same thinking recipe. Nobody talks during this part.
+**Analogy.** After the class discussion (attention), each student goes to their desk and **thinks alone** about what they heard. Everyone follows the same thinking recipe. Nobody talks during this part.
 
 A tiny example for **one** word's list, using one layer and the "ReLU" rule (negative numbers become 0):
 
@@ -338,7 +338,7 @@ flowchart LR
 
 ## 9. The temperature knob
 
-**ELI5.** Imagine a dice with unfair sides. **Low temperature = a very strict teacher** who always picks the top answer. **High temperature = a wild artist** who may pick surprising answers.
+**Analogy.** Imagine a dice with unfair sides. **Low temperature = a very strict teacher** who always picks the top answer. **High temperature = a wild artist** who may pick surprising answers.
 
 Same four scores, three temperatures:
 
@@ -362,7 +362,7 @@ flowchart LR
 
 ## 10. How it learns, one mistake at a time
 
-**ELI5.** A student answers a quiz question. The teacher says how wrong they were. The student fixes their thinking a tiny bit. After millions of questions, the student is very good.
+**Analogy.** A student answers a quiz question. The teacher says how wrong they were. The student fixes their thinking a tiny bit. After millions of questions, the student is very good.
 
 Training text: **"The cat drank the milk"**. We show the model "The cat drank the" and the right next word is **milk**.
 
@@ -479,4 +479,4 @@ With attention, "it" can **look straight at "cat"**: **1 hop**.
 - [OpenAI Tokenizer](https://platform.openai.com/tokenizer) - type any text and see the tokens.
 - [The Illustrated Transformer (Jay Alammar)](https://jalammar.github.io/illustrated-transformer/) - original pictures.
 - [Attention Is All You Need (arXiv)](https://arxiv.org/abs/1706.03762) - the paper.
-- [Back to chapter 2](README.md) · Next: [2. The Illustrated Transformer, step by step](02-illustrated-transformer-explained.md) · then [3. "Attention Is All You Need" explained simply](03-attention-is-all-you-need-explained.md)
+- [Back to chapter 2](README.md) · Next: [2. The Illustrated Transformer, step by step](02-illustrated-transformer-explained.md) · then [3. "Attention Is All You Need" explained](03-attention-is-all-you-need-explained.md)
