@@ -1,6 +1,6 @@
-# The Transformer by Example: Follow One Sentence
+# 1. The Transformer by Example: Follow One Sentence
 
-The other two pages in this folder explain the ideas. This page **shows** them. We take **one small sentence** and follow it through a Transformer, step by step, with tiny numbers you can check with a pencil.
+This is page 1 of 3 in the chapter's reading order. The next two pages explain the ideas in more detail (each with its own examples). This page **shows** them first. We take **one small sentence** and follow it through a Transformer, step by step, with tiny numbers you can check with a pencil.
 
 > **The numbers are toys.** Real models use hundreds of numbers per word, and their values are learned, not chosen by hand. We use 2 to 4 numbers and pick them so the story is easy to see. The method is exactly the real one.
 
@@ -479,4 +479,4 @@ With attention, "it" can **look straight at "cat"**: **1 hop**.
 - [OpenAI Tokenizer](https://platform.openai.com/tokenizer) - type any text and see the tokens.
 - [The Illustrated Transformer (Jay Alammar)](https://jalammar.github.io/illustrated-transformer/) - original pictures.
 - [Attention Is All You Need (arXiv)](https://arxiv.org/abs/1706.03762) - the paper.
-- [Back to chapter 2](README.md) · [The Transformer, step by step](transformer-explained-simply.md) · ["Attention Is All You Need" explained simply](attention-is-all-you-need-explained.md)
+- [Back to chapter 2](README.md) · Next: [2. The Illustrated Transformer, step by step](02-illustrated-transformer-explained.md) · then [3. "Attention Is All You Need" explained simply](03-attention-is-all-you-need-explained.md)

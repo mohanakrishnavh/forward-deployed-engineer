@@ -1,10 +1,10 @@
-# "Attention Is All You Need" Explained Simply
+# 3. "Attention Is All You Need" Explained Simply
 
 This page explains the research paper [Attention Is All You Need](https://arxiv.org/abs/1706.03762) (Vaswani, Shazeer, Parmar, Uszkoreit, Jones, Gomez, Kaiser and Polosukhin, 2017). It is the paper that introduced the **Transformer**, the design behind today's large language models.
 
-It follows the paper's own section order, in plain words, with pictures and ELI5 ("explain like I am five") parts. All words and diagrams here are written from scratch. For the walk-through of how the model computes things, read the companion page: [The Transformer, step by step](transformer-explained-simply.md).
+It follows the paper's own section order, in plain words, with pictures and ELI5 ("explain like I am five") parts. All words and diagrams here are written from scratch. Read the first two pages in this chapter before this one if you can: they show how the model computes things.
 
-> **Find it hard? Start here:** [The Transformer by Example](transformer-by-example.md) follows one sentence through the whole model with small numbers. Section 11 below also has quick examples for the paper's main ideas.
+> **Reading order in this chapter:** 1) [The Transformer by Example](01-transformer-by-example.md), 2) [The Illustrated Transformer, step by step](02-illustrated-transformer-explained.md), 3) this page. Every section below has a **worked example**.
 >
 > **How to read this page.** Each section has **ELI5**, **The real idea** and a **picture**. If you are short on time, read only the ELI5 parts and the one-page summary at the end.
 
@@ -20,8 +20,7 @@ It follows the paper's own section order, in plain words, with pictures and ELI5
 8. [What the experiments taught](#8-what-the-experiments-taught-model-variations)
 9. [Beyond translation: parsing](#9-beyond-translation-parsing)
 10. [Conclusion and what came next](#10-conclusion-and-what-came-next)
-11. [Quick examples for the paper's main ideas](#11-quick-examples-for-the-papers-main-ideas)
-12. [One-page summary and glossary](#12-one-page-summary-and-glossary)
+11. [One-page summary and glossary](#11-one-page-summary-and-glossary)
 
 ---
 
@@ -55,6 +54,17 @@ flowchart LR
 | More parallel | Many steps can run at the same time on a GPU |
 | Faster to train | Much less training time |
 
+### Example: one long sentence
+
+*"The cat that my neighbour adopted last week drank the milk."*
+
+| Model | Time to read it |
+|---|---|
+| Old (one word at a time) | 12 steps in a row. The 12th cannot start before the 11th |
+| Transformer | All 12 words are processed **at the same time** in one big table step |
+
+On a GPU that has thousands of small workers, the second way keeps them all busy.
+
 ---
 
 ## 2. Introduction: what was wrong before
@@ -74,6 +84,15 @@ flowchart TD
   S --> R["Faster training<br/>+ better long-range links"]
 ```
 
+### Example: the telephone game
+
+A line of 6 kids passes the message "the cat drank the milk". The 6th kid hears "the cat dank the silk". Every hand can change the message a little.
+
+| Method | Chance the first word is remembered well at word 6 |
+|---|---|
+| Passing it hand to hand (recurrent) | Lower: it went through 5 hands |
+| Looking straight at it (attention) | Higher: 1 direct look |
+
 ---
 
 ## 3. Background: other ways people tried to fix it
@@ -89,6 +108,25 @@ Some models (Extended Neural GPU, ByteNet, ConvS2S) used **convolutions** to rea
 The price: when attention averages over many words, the picture gets a little blurry. The paper fixes this with **multi-head attention** (many separate views at once).
 
 The paper also names its key tool, **self-attention**: a sentence pays attention to **itself** to understand each word in context. It says the Transformer is the **first** model that relies **completely** on self-attention to turn one sequence into another.
+
+### Example: how many steps to connect two words?
+
+Sentence of 16 words. Connect word 1 with word 16.
+
+| Model | Steps needed | Why |
+|---|---|---|
+| Recurrent | 15 | Pass along every word |
+| Convolution with window 3 (ConvS2S style) | about 8 | Window grows by 2 words per layer, so about 8 layers are needed |
+| Convolution with doubling windows (ByteNet style) | about 4 | Windows double: 1, 2, 4, 8 |
+| **Transformer** | **1** | Direct look |
+
+```mermaid
+xychart-beta
+  title "Steps to connect word 1 with word 16"
+  x-axis ["Recurrent", "ConvS2S", "ByteNet", "Transformer"]
+  y-axis "Steps" 0 --> 16
+  bar [15, 8, 4, 1]
+```
 
 ---
 
@@ -216,6 +254,64 @@ flowchart LR
   P --> IN["Input to the first layer"]
 ```
 
+### Example: one sentence through the Transformer base model
+
+Input: **"I am a student"** (4 tokens).
+
+| Stage | Table size (rows x columns) | What it is |
+|---|---|---|
+| Token IDs | 4 | One number per token |
+| Embeddings (x sqrt(512)) | 4 x 512 | Each token becomes 512 numbers |
+| + Position stickers | 4 x 512 | Same size, now with order |
+| One head: Q, K, V | 4 x 64 each | 64 numbers per token |
+| One head: scores | 4 x 4 | Every token against every token |
+| 8 heads glued together | 4 x 512 | 8 x 64 = 512 |
+| After W^O | 4 x 512 | Back to model size |
+| Feed-forward middle | 4 x 2048 | The "thinking room" is wider |
+| Feed-forward out | 4 x 512 | Shrunk back |
+| After 6 layers | 4 x 512 | Same size all the way up |
+| Linear to vocabulary | 4 x 37,000 | One score per word piece (English-German vocabulary) |
+| Softmax | 4 x 37,000 | Percentages for each next word |
+
+**Why multiply embeddings by sqrt(512) = 22.6?** Learned embedding numbers are small, for example 0.04. The position stickers contain numbers up to 1. Without scaling, the sticker would drown the meaning.
+
+| | Meaning part | Position part |
+|---|---|---|
+| Before scaling | 0.04 | up to 1.0 (too loud) |
+| After scaling (x 22.6) | 0.9 | up to 1.0 (fair) |
+
+**Shortcut + tidy-up example** (`LayerNorm(x + Sublayer(x))`): x = (1.0, 2.0), Sublayer(x) = (0.5, -1.0). Sum = (1.5, 1.0). Average 1.25, spread 0.25. Result = **(1.0, -1.0)**.
+
+**Attention example** (`softmax(QK^T / sqrt(d_k)) V`) for the word "it" with two candidate words:
+
+| | cat | milk |
+|---|---|---|
+| Score (Q dot K) | 7 | 2 |
+| Divide by sqrt(2) = 1.41 | 4.95 | 1.41 |
+| Softmax | **97%** | 3% |
+| Value | (5, 1) | (0, 4) |
+| Result: 0.97 x (5, 1) + 0.03 x (0, 4) | **(4.85, 1.09)** | |
+
+**Why divide by sqrt(d_k)?** Scores 8, 16, 24 give softmax 0.0000, 0.0003, **0.9997** without dividing (winner takes all, almost no learning) and 0.09, 0.24, **0.67** after dividing by 8.
+
+**Position sticker example** (4-number toy):
+
+| Position | Sticker |
+|---|---|
+| 0 | 0.00, 1.00, 0.00, 1.00 |
+| 1 | 0.84, 0.54, 0.01, 1.00 |
+| 2 | 0.91, -0.42, 0.02, 1.00 |
+| 3 | 0.14, -0.99, 0.03, 1.00 |
+
+**The decoder mask while writing "I am a student":**
+
+| Writing | Allowed to see |
+|---|---|
+| I | I |
+| am | I, am |
+| a | I, am, a |
+| student | I, am, a, student |
+
 ---
 
 ## 5. Why self-attention? (the comparison table)
@@ -250,6 +346,34 @@ flowchart LR
 - It lets any two words connect in **one hop**, so long-range links are easier to learn.
 - For very long inputs the n x n part gets costly. The authors suggest looking only at **nearby** words in that case (future work).
 - Bonus: attention weights can be drawn as pictures, which may help people **see** what a head is doing. The paper's appendix shows heads that track long-distance links and sentence structure.
+
+### Example: real numbers for the comparison table
+
+Take word-piece sentences of **n = 50** tokens and vector size **d = 512**.
+
+| Layer type | Formula | Work |
+|---|---|---|
+| Self-attention | n x n x d | 50 x 50 x 512 = **1.3 million** |
+| Recurrent | n x d x d | 50 x 512 x 512 = **13.1 million** |
+
+Here attention is about **10 times cheaper**, because n (50) is smaller than d (512).
+
+Now a very long text of **n = 1,000** tokens:
+
+| Layer type | Work |
+|---|---|
+| Self-attention | 1,000 x 1,000 x 512 = **512 million** |
+| Recurrent | 1,000 x 512 x 512 = **262 million** |
+
+For very long inputs attention becomes the costlier one (n is bigger than d). That is why the paper suggests looking only at nearby tokens for long inputs.
+
+```mermaid
+xychart-beta
+  title "Work per layer (millions)"
+  x-axis ["Attention n=50", "Recurrent n=50", "Attention n=1000", "Recurrent n=1000"]
+  y-axis "Millions" 0 --> 550
+  bar [1.3, 13.1, 512, 262]
+```
 
 ---
 
@@ -298,6 +422,37 @@ xychart-beta
 | Residual dropout | 0.1 (base model) | Randomly switch off some numbers during training so the model cannot lean on any one of them |
 | Label smoothing | 0.1 | Do not be 100% sure of the right answer. The model becomes less over-confident. It lowers the sharpness (perplexity) score a little, but helps translation quality |
 
+### Example: word pieces, batches and the learning rate
+
+**Word pieces.** Long or rare words are split, so the vocabulary stays small:
+
+| Word | Pieces |
+|---|---|
+| cat | cat |
+| unbelievable | un + believ + able |
+| thirsty | thirst + y |
+
+**A batch.** About 25,000 source tokens + 25,000 target tokens go through together. That is roughly 1,000 sentences of 25 tokens each. The base model repeats this **100,000 times** (about 12 hours).
+
+**Warm-up learning rate**
+
+| Step | Learning rate | Why |
+|---|---|---|
+| 1 | almost 0 | New model; tiny careful steps |
+| 1,000 | 0.00017 | Speeding up |
+| 4,000 | **0.00070 (peak)** | Full speed |
+| 16,000 | 0.00035 | Slowing to fine-tune |
+| 100,000 | 0.00014 | Small final changes |
+
+**Label smoothing (0.1)** with 5 candidate words, correct word = milk:
+
+| Word | Normal target | Smoothed target |
+|---|---|---|
+| milk (correct) | 100% | **92%** |
+| each of 4 others | 0% | 2% each |
+
+The model is never asked to be 100% sure, so it stays humble on new sentences.
+
 ---
 
 ## 7. Results
@@ -324,6 +479,27 @@ flowchart LR
   A["Earlier best systems<br/>(RNN / CNN, often ensembles)"] -->|"slower, more costly"| B["Transformer<br/>higher BLEU, less training cost"]
 ```
 
+### Example: reading a BLEU score
+
+| | Text |
+|---|---|
+| Human translation | the cat sat on the mat |
+| Machine translation | the cat is on the mat |
+| Matching words | the, cat, on, the, mat = 5 of 6 |
+| Simple match score | 5 / 6 = 0.83 |
+
+Real BLEU also checks matching phrases of 2, 3 and 4 words and is shown out of 100.
+
+```mermaid
+xychart-beta
+  title "BLEU on English to German (higher is better)"
+  x-axis ["Previous best (about 26 or less)", "Transformer big"]
+  y-axis "BLEU" 0 --> 30
+  bar [26, 28.4]
+```
+
+The paper says the big Transformer beat earlier results by more than 2 BLEU. The bar for the earlier systems is shown as "about 26" here to illustrate that gap. Check the paper's Table 2 for the exact earlier scores.
+
 ---
 
 ## 8. What the experiments taught (model variations)
@@ -341,6 +517,17 @@ The authors changed one thing at a time on a base model and watched the score. T
 
 (The exact table of numbers is in the paper, Table 3.)
 
+### Example: choosing the number of heads
+
+| Heads | Size of each head | Effect (paper's test) |
+|---|---|---|
+| 1 | 512 | About 0.9 BLEU worse than the best |
+| 8 | 64 | Good (the paper's choice) |
+| 16 | 32 | About the same as 8 |
+| 32 | 16 | A little worse again |
+
+Think of 512 colour pencils shared among painters. One painter with all 512 pencils paints one picture. Eight painters with 64 pencils each paint eight pictures, and then you blend them. With 32 painters each has only 16 pencils, which is too few for a good picture.
+
 ---
 
 ## 9. Beyond translation: parsing
@@ -353,6 +540,22 @@ To test whether the Transformer is only good at translation, the authors tried *
 | Large: about 17 million sentences (semi-supervised) | **92.7** |
 
 The results were strong and beat most earlier models. Only one specialised model scored higher. This shows the Transformer **generalizes** to other language tasks.
+
+### Example: what "parsing" means
+
+Sentence: **"The cat drank milk"**. A parser draws the grammar tree:
+
+```mermaid
+flowchart TD
+  S["Sentence"] --> NP["Noun phrase"]
+  S --> VP["Verb phrase"]
+  NP --> D["The"]
+  NP --> N["cat"]
+  VP --> V["drank"]
+  VP --> NP2["Noun phrase: milk"]
+```
+
+The Transformer was trained to output this tree as text. Because it did well, with almost no special tuning, the authors argued it is a **general** tool and not just a translator.
 
 ---
 
@@ -381,100 +584,7 @@ timeline
 
 ---
 
-## 11. Quick examples for the paper's main ideas
-
-### Example 1: why "one hop" matters
-
-Sentence: *"The cat that my neighbour adopted last week drank the milk."* Which word is the subject of "drank"? It is "cat", five words earlier.
-
-| Model | How "drank" reaches "cat" | Hops |
-|---|---|---|
-| Recurrent (old) | cat to that to my to neighbour to adopted to last to week to drank | many, and the message may blur |
-| Convolution (window of 3) | Needs several layers to widen the window | a few layers |
-| **Self-attention** | "drank" looks straight at "cat" | **1** |
-
-```mermaid
-flowchart LR
-  subgraph OLD["Recurrent: pass it along"]
-    direction LR
-    a1["cat"] --> a2["that"] --> a3["my"] --> a4["neighbour"] --> a5["adopted"] --> a6["drank"]
-  end
-  subgraph NEW["Self-attention: look directly"]
-    direction LR
-    b1["cat"] -. "1 hop" .-> b6["drank"]
-  end
-```
-
-### Example 2: why the paper divides by sqrt(d_k)
-
-Three scores 8, 16, 24 (typical when vectors are long):
-
-| | Softmax without dividing | Softmax after dividing by 8 |
-|---|---|---|
-| Result | 0.0000, 0.0003, **0.9997** | 0.09, 0.24, **0.67** |
-| Meaning | Winner takes all, almost no learning signal | Healthy spread, the model keeps learning |
-
-### Example 3: what a position sticker looks like
-
-The paper's waves give each position its own fingerprint (4-number toy version):
-
-| Position | Sticker |
-|---|---|
-| 0 | 0.00, 1.00, 0.00, 1.00 |
-| 1 | 0.84, 0.54, 0.01, 1.00 |
-| 2 | 0.91, -0.42, 0.02, 1.00 |
-| 3 | 0.14, -0.99, 0.03, 1.00 |
-
-The first pair moves fast, the second pair moves slowly. Like a clock: seconds hand and minutes hand together tell the exact time.
-
-### Example 4: reading a BLEU score
-
-BLEU compares a machine translation with a human one. A tiny version, counting matching words:
-
-| | Text |
-|---|---|
-| Human translation | the cat sat on the mat |
-| Machine translation | the cat is on the mat |
-| Matching words | the, cat, on, the, mat = 5 of 6 |
-| Simple match score | 5 / 6 = 0.83 |
-
-Real BLEU also checks matching word groups (two, three and four words long) and is shown out of 100. A BLEU of **28.4** (English to German) and **41.8** (English to French) were new records in 2017.
-
-### Example 5: warm-up learning rate
-
-| Step | Learning rate | Why |
-|---|---|---|
-| 1 | almost 0 | The model is new; take tiny careful steps |
-| 1,000 | 0.00017 | Speeding up |
-| 4,000 | **0.00070 (peak)** | Full speed |
-| 16,000 | 0.00035 | Slowing to fine-tune |
-| 100,000 | 0.00014 | Small changes at the end |
-
-### Example 6: the mask while writing "I am a student"
-
-| Writing | Allowed to see |
-|---|---|
-| I | I |
-| am | I, am |
-| a | I, am, a |
-| student | I, am, a, student |
-
-Future words are hidden, so the model has to predict, not copy.
-
-### Example 7: choosing 8 heads
-
-| Heads | Effect on translation quality (paper's test) |
-|---|---|
-| 1 | About 0.9 BLEU worse than the best |
-| 8 | Good (the paper's choice) |
-| 16 | About the same as 8 |
-| 32 | A little worse again |
-
-Too few heads: one narrow view. Too many: each head becomes too small to be useful.
-
----
-
-## 12. One-page summary and glossary
+## 11. One-page summary and glossary
 
 ### Summary in 8 lines
 
@@ -515,4 +625,4 @@ Too few heads: one narrow view. Too many: each head becomes too small to be usef
 - [The Illustrated Transformer (Jay Alammar)](https://jalammar.github.io/illustrated-transformer/) - a picture-rich walk-through.
 - [The Annotated Transformer (Harvard NLP)](https://nlp.seas.harvard.edu/annotated-transformer/) - the paper with working code, line by line.
 - [Tensor2Tensor](https://github.com/tensorflow/tensor2tensor) - the library where the authors released their code.
-- [Back to chapter 2](README.md) - and the companion page [The Transformer, step by step](transformer-explained-simply.md).
+- [Back to chapter 2](README.md) and the earlier pages: [1. The Transformer by Example](01-transformer-by-example.md), [2. The Illustrated Transformer, step by step](02-illustrated-transformer-explained.md).

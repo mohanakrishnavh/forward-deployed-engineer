@@ -19,7 +19,7 @@ Chapters can hold extra files for deeper topics. Diagrams use [Mermaid](https://
 | # | Note |
 |---|---|
 | 1 | [Forward Deployed Engineering: The Role and the Rise of LLMs](chapters/01-forward-deployed-engineering/README.md) |
-| 2 | [How LLMs Actually Work: Tokens, Attention and Transformers](chapters/02-how-llms-work/README.md) <br/>Extra: [The Transformer by Example](chapters/02-how-llms-work/transformer-by-example.md)<br/>Extra: [The Transformer, step by step (ELI5)](chapters/02-how-llms-work/transformer-explained-simply.md)<br/>Extra: ["Attention Is All You Need" explained simply](chapters/02-how-llms-work/attention-is-all-you-need-explained.md) |
+| 2 | [How LLMs Actually Work: Tokens, Attention and Transformers](chapters/02-how-llms-work/README.md) <br/>Read in order: [1. The Transformer by Example](chapters/02-how-llms-work/01-transformer-by-example.md) · [2. The Illustrated Transformer, step by step](chapters/02-how-llms-work/02-illustrated-transformer-explained.md) · [3. "Attention Is All You Need" explained](chapters/02-how-llms-work/03-attention-is-all-you-need-explained.md) |
 | 3 | [Integrating an LLM with Your Application](chapters/03-integrating-llm-with-your-app/README.md) |
 | 4 | [Build Your First AI Chatbot: Context Window, Memory and Hallucinations](chapters/04-first-ai-chatbot/README.md) |
 | 5 | [Introduction to AI Agents: Build Your First Agent](chapters/05-ai-agents/README.md) |

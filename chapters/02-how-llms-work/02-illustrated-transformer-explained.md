@@ -1,8 +1,8 @@
-# The Transformer, Step by Step (in Simple Words)
+# 2. The Illustrated Transformer, Step by Step (in Simple Words)
 
 This is a plain-English walk through the Transformer. It follows the same order as Jay Alammar's famous article, [The Illustrated Transformer](https://jalammar.github.io/illustrated-transformer/). Read that article for the original pictures. Here the words, diagrams and examples are written again from scratch so that a beginner can follow.
 
-> **Find it hard? Start here:** [The Transformer by Example](transformer-by-example.md) follows one sentence through every step with small numbers and pictures. Come back to this page afterwards.
+> **Reading order in this chapter:** 1) [The Transformer by Example](01-transformer-by-example.md), 2) this page, 3) ["Attention Is All You Need" explained simply](03-attention-is-all-you-need-explained.md). Every section below ends with a **worked example** with small numbers.
 >
 > **How to read this page.** Each step has three parts: **ELI5** (like you are five), **The real idea**, and a **picture**. If you only want the big idea, read the ELI5 parts.
 
@@ -67,6 +67,27 @@ flowchart TB
 
 > Many modern chatbots (GPT, Claude and similar) use only the **decoder-style** part. The ideas below still apply.
 
+### Example: one sentence through the whole office
+
+Input (French): **je suis etudiant**. Wanted output (English): **I am a student**.
+
+| Stage | What happens | Result |
+|---|---|---|
+| Encoder layer 1 | Each French word looks at the others | "suis" learns it belongs to "je" |
+| Encoder layers 2 to 6 | Understanding gets deeper | Notes: "a person says they are a student" |
+| Decoder, step 1 | Starts with a start symbol, checks the notes | writes **I** |
+| Decoder, step 2 | Sees "I", checks the notes again | writes **am** |
+| Decoder, step 3 | Sees "I am" | writes **a** |
+| Decoder, step 4 | Sees "I am a" | writes **student** |
+| Decoder, step 5 | Sees "I am a student" | writes the **end symbol** and stops |
+
+```mermaid
+flowchart LR
+  A["je suis etudiant"] --> B["Encoder<br/>notes: a person is a student"]
+  B --> C["Decoder"]
+  C --> D["I"] --> E["am"] --> F["a"] --> G["student"] --> H["end"]
+```
+
 ---
 
 ## 2. Words become numbers
@@ -88,6 +109,18 @@ flowchart LR
 
 **Important detail.** Each word moves up through the encoder on its **own path**. Self-attention is the only place where these paths talk to each other. The feed-forward layer has no cross-talk, so all paths can be computed **in parallel**. This is why Transformers are fast to train.
 
+### Example: words to number lists
+
+Real size is 512 numbers per word. We use 4 so you can see them:
+
+| Word | Its number list (embedding) |
+|---|---|
+| je | 0.2, -0.5, 0.1, 0.8 |
+| suis | 0.7, 0.3, -0.4, 0.1 |
+| etudiant | -0.3, 0.9, 0.6, -0.2 |
+
+Three words in, a table of **3 rows x 4 columns** out (in the real model: 3 rows x 512 columns). Every layer takes a table of this kind and returns a table of the same size.
+
 ---
 
 ## 3. Adding word order (positional encoding)
@@ -107,6 +140,32 @@ flowchart LR
   PE["Position vector<br/>(where the word is)"] --> P
   P --> X["Input to the encoder"]
 ```
+
+### Example: why order matters
+
+Without stickers the model sees only a bag of words:
+
+| Sentence | Bag of words the model sees (no stickers) | Same? |
+|---|---|---|
+| dog bites man | {dog, bites, man} | |
+| man bites dog | {dog, bites, man} | **yes, identical, bad!** |
+
+With stickers, each word carries its position:
+
+| Sentence | What the model sees (with stickers) |
+|---|---|
+| dog bites man | dog@0, bites@1, man@2 |
+| man bites dog | man@0, bites@1, dog@2 |
+
+Now the two sentences look different, and the model can learn that the word at position 0 is the one doing the biting.
+
+Real sticker values for a 4-number sticker:
+
+| Position | Sticker |
+|---|---|
+| 0 | 0.00, 1.00, 0.00, 1.00 |
+| 1 | 0.84, 0.54, 0.01, 1.00 |
+| 2 | 0.91, -0.42, 0.02, 1.00 |
 
 ---
 
@@ -175,6 +234,33 @@ In simple words:
 5. **Weight the values.** Multiply each word's value by its percentage. Important words stay loud. Unimportant words get very quiet.
 6. **Add** the weighted values. That is the output for this word.
 
+### Example: the same word "it", two different meanings
+
+| Sentence | What "it" pays most attention to | Why |
+|---|---|---|
+| The cat drank the milk because **it** was thirsty | **cat** | Only living things get thirsty |
+| The cat drank the milk because **it** was delicious | **milk** | Food can be delicious |
+
+Attention bars (made-up but typical):
+
+| "it" looks at | thirsty sentence | delicious sentence |
+|---|---|---|
+| cat | █████████████████ 85% | ██ 8% |
+| milk | ██ 8% | █████████████████ 84% |
+| other words | █ 7% | █ 8% |
+
+```mermaid
+flowchart LR
+  subgraph S1["...because it was thirsty"]
+    I1["it"] ==>|"85%"| C1["cat"]
+    I1 -.->|"8%"| M1["milk"]
+  end
+  subgraph S2["...because it was delicious"]
+    I2["it"] -.->|"8%"| C2["cat"]
+    I2 ==>|"84%"| M2["milk"]
+  end
+```
+
 ---
 
 ## 5. Self-attention with a small calculation
@@ -233,6 +319,20 @@ flowchart LR
   R --> O["New vector for it<br/>(4.70, 1.14)<br/>mostly animal"]
 ```
 
+### Example: the attention scores as a bar chart
+
+The percentages from the calculation above:
+
+```mermaid
+xychart-beta
+  title "How much 'it' attends to each word"
+  x-axis ["animal", "street", "it"]
+  y-axis "Attention percent" 0 --> 100
+  bar [92, 3, 5]
+```
+
+**Try it yourself.** Change the query of "it" from (2, 1) to (0, 2) (a query that wants a *thing*, not an animal). The scores become 2 (animal), 4 (street), 2 (it). After dividing and softmax, "street" gets the most attention. The query decides what the word is looking for.
+
 ---
 
 ## 6. Self-attention for all words at once
@@ -263,6 +363,29 @@ flowchart LR
 ```
 
 The score table has one row and one column per word. Row "it" shows how much "it" looks at each other word.
+
+### Example: sizes for a 4-word sentence
+
+Sentence: **The cat drank milk** (4 words), one head.
+
+| Table | Size (rows x columns) | Meaning |
+|---|---|---|
+| X (word lists) | 4 x 512 | 4 words, 512 numbers each |
+| Q, K, V | 4 x 64 each | 64 numbers per word, for each of the three |
+| Q x K-transposed | **4 x 4** | A score for every pair of words (16 scores) |
+| After softmax | 4 x 4 | Each row adds up to 100% |
+| Z (result) | 4 x 64 | A new list for each word |
+
+The 4 x 4 score table for our toy attention (rows look at columns):
+
+| | The | cat | drank | milk |
+|---|---|---|---|---|
+| **The** | 70% | 10% | 10% | 10% |
+| **cat** | 15% | 40% | 35% | 10% |
+| **drank** | 5% | 55% | 20% | 20% |
+| **milk** | 5% | 10% | 60% | 25% |
+
+Read the row "drank": it looks mostly (55%) at "cat", the one doing the drinking. (Numbers are made up to show the idea.)
 
 ---
 
@@ -296,6 +419,24 @@ flowchart TD
   WO --> Z["One result table"]
 ```
 
+### Example: 8 heads, 8 small views
+
+The 512 numbers are split into 8 views of 64 numbers each.
+
+| Head | Might watch for (made-up names) | "it" looks mostly at |
+|---|---|---|
+| 1 | Who is the subject? | cat |
+| 2 | What action happened? | drank |
+| 3 | What is the feeling? | thirsty |
+| 4 to 8 | Other patterns | various |
+
+Sizes: 8 heads x 64 numbers = **512 numbers**, the same as one big view. So the cost is about the same, but you get 8 views instead of 1.
+
+```mermaid
+flowchart LR
+  A["8 results<br/>each 4 x 64"] --> B["Glue side by side<br/>4 x 512"] --> C["Multiply by WO<br/>4 x 512"]
+```
+
 ---
 
 ## 8. Residual connections and layer norm
@@ -318,6 +459,20 @@ flowchart LR
 
 The decoder uses the same pattern around its sub-layers.
 
+### Example: the shortcut and the tidy-up with real numbers
+
+One word's list has 2 numbers. Attention changes it a little.
+
+| Step | Numbers |
+|---|---|
+| Input x | (1.0, 2.0) |
+| Sub-layer output | (0.5, -1.0) |
+| **Add the shortcut** (x + output) | (1.5, 1.0) |
+| **Layer norm**: average = 1.25, spread = 0.25 | (1.5 - 1.25) / 0.25 = **1.0**, (1.0 - 1.25) / 0.25 = **-1.0** |
+| Result | (1.0, -1.0) |
+
+Even if the sub-layer made a big mistake, the original x is still inside the sum. The tidy-up step then re-centres the numbers around 0 with a spread of 1, so they never grow out of control after many layers.
+
 ---
 
 ## 9. The feed-forward layer
@@ -336,6 +491,19 @@ flowchart LR
 ```
 
 (The original paper makes the inside of this network 4 times wider than 512, which is 2048. This detail comes from the paper, not from the article.)
+
+### Example: the thinking room with numbers
+
+One word, 2 numbers in. The room widens to 4 numbers, applies ReLU, and shrinks back to 2.
+
+| Step | Numbers |
+|---|---|
+| In | (4.61, 1.13) |
+| Widen (multiply by a table and add a nudge) | (2.0, -1.5, 0.7, -0.2) |
+| ReLU (negative becomes 0) | (2.0, 0.0, 0.7, 0.0) |
+| Shrink back | (3.1, 0.9) |
+
+In the real model: **512 in, 2048 in the middle, 512 out**. That is 512 x 2048 + 2048 x 512, about **2 million** adjustable numbers, per layer, and the same ones are used for every word.
 
 ---
 
@@ -391,6 +559,27 @@ flowchart LR
   EDA --> NEXT["Next sub-layer"]
 ```
 
+### Example: the decoder writing "I am a student"
+
+| Step | Already written (input) | Can see (mask) | Looks at in the notes | Top chances | Chosen |
+|---|---|---|---|---|---|
+| 1 | start | start | "je" | I 70%, we 10% | **I** |
+| 2 | start I | start, I | "suis" | am 80%, was 8% | **am** |
+| 3 | start I am | start, I, am | "etudiant" | a 60%, the 15% | **a** |
+| 4 | start I am a | all four | "etudiant" | student 85%, pupil 8% | **student** |
+| 5 | start I am a student | all five | everything | end 90% | **end** |
+
+(Chances are made-up numbers for teaching.)
+
+```mermaid
+flowchart TD
+  S1["start"] -->|"I 70%"| S2["I"]
+  S2 -->|"am 80%"| S3["am"]
+  S3 -->|"a 60%"| S4["a"]
+  S4 -->|"student 85%"| S5["student"]
+  S5 -->|"end 90%"| S6["end"]
+```
+
 ---
 
 ## 11. Picking the word: linear + softmax
@@ -410,6 +599,25 @@ flowchart LR
   G --> S["Softmax"]
   S --> P["Percentages<br/>am: 62%, are: 20%, ..."]
   P --> W["Chosen word: am"]
+```
+
+### Example: from scores to a word (tiny dictionary)
+
+Dictionary of 6 words. The decoder output goes through the linear layer and gives these raw scores (logits):
+
+| Word | a | am | i | thanks | student | end |
+|---|---|---|---|---|---|---|
+| Logit | 0.5 | 3.0 | 1.0 | -1.0 | 0.0 | -0.5 |
+| After softmax | 6.2% | **76%** | 10.3% | 1.4% | 3.8% | 2.3% |
+
+The biggest chance is **am** at 76%, so the model writes "am".
+
+```mermaid
+xychart-beta
+  title "Softmax result for the next word"
+  x-axis ["a", "am", "i", "thanks", "student", "end"]
+  y-axis "Chance (percent)" 0 --> 100
+  bar [6, 76, 10, 1, 4, 2]
 ```
 
 ---
@@ -449,6 +657,25 @@ flowchart LR
 
 After many examples, the model puts most of the percentage on the right word. Real vocabularies are much bigger (about 30,000 to 50,000 words or word pieces).
 
+### Example: how wrong is the model, in numbers
+
+Target sentence: **i am a student end** (5 positions). At each position the correct word should get a high chance.
+
+| | Chance given to the right word | Loss at that position (lower is better) |
+|---|---|---|
+| Untrained model (about 1 in 6) | 17% | 1.77 |
+| After training | 90% | 0.11 |
+
+```mermaid
+xychart-beta
+  title "Loss over training (shape only)"
+  x-axis "Training progress" ["start", "early", "middle", "late", "done"]
+  y-axis "Loss" 0 --> 2
+  line [1.8, 1.2, 0.6, 0.3, 0.11]
+```
+
+Loss going down means the model is putting more and more chance on the correct word.
+
 ---
 
 ## 13. Greedy search and beam search
@@ -473,6 +700,30 @@ flowchart TD
 ```
 
 At every step, extend each kept sentence with every possible next word, score the results, and keep only the best `beam_size`. Beam search often gives better sentences than greedy search because it can recover from a weak first choice.
+
+### Example: a case where beam search wins
+
+| Step 1 | Chance |
+|---|---|
+| The | 45% |
+| A | 40% |
+
+| Step 2 | Chance | Whole sentence |
+|---|---|---|
+| The, then cat | 40% | 0.45 x 0.40 = **0.18** |
+| The, then dog | 30% | 0.45 x 0.30 = 0.135 |
+| A, then cat | 90% | 0.40 x 0.90 = **0.36** |
+
+- **Greedy** takes "The" (45% beats 40%) and ends with 0.18.
+- **Beam search (width 2)** keeps "The" and "A", then finds **"A cat" = 0.36**, twice as likely.
+
+```mermaid
+flowchart TD
+  S["Start"] --> A["The 45%"]
+  S --> B["A 40%"]
+  A --> A1["The cat 0.18"]
+  B --> B1["A cat 0.36 (best)"]
+```
 
 ---
 
@@ -521,4 +772,4 @@ Words become number lists and get a position sticker. In **self-attention**, eve
 - [Attention Is All You Need (2017)](https://arxiv.org/abs/1706.03762) - the research paper.
 - [The Annotated Transformer (Harvard NLP)](https://nlp.seas.harvard.edu/annotated-transformer/) - the paper with working code, line by line.
 - [Hugging Face: How to generate text](https://huggingface.co/blog/how-to-generate) - greedy, beam search and sampling.
-- [Back to chapter 2](README.md)
+- [Back to chapter 2](README.md) · Next: ["Attention Is All You Need" explained simply](03-attention-is-all-you-need-explained.md)
