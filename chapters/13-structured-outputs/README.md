@@ -29,7 +29,7 @@ Without a schema, answers like "Sure! The meeting is at 4 PM" are unusable by co
 
 - **Inject context the model cannot know** (today's date) or "tomorrow" cannot be resolved.
 - Tell it **not to guess** missing fields; validate afterwards.
-- Treat output as untrusted input: validate types and ranges before calling business APIs (see note 19).
+- Treat output as untrusted input: validate types and ranges before calling business APIs (see chapter 19).
 - The system prompt can also carry data (name, address, skills) so the model can fill fields from known context.
 
 ## Picture it

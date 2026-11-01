@@ -4,7 +4,7 @@
 
 ## Recap
 
-An MCP server exposes **Tools**, **Resources** and **Prompts**. Tools (note 14) are discovered with `tools/list` and run with `tools/call`. This note covers the other two, with their own calls: `resources/list` and `resources/read`, and `prompts/list` and `prompts/get`.
+An MCP server exposes **Tools**, **Resources** and **Prompts**. Tools (chapter 14) are discovered with `tools/list` and run with `tools/call`. This chapter covers the other two, with their own calls: `resources/list` and `resources/read`, and `prompts/list` and `prompts/get`.
 
 ## Resources: data the client can discover and read
 

@@ -36,7 +36,7 @@ flowchart LR
 2. The user says "Add 'Go to Gym' as my task". The LLM, knowing the tools, produces structured output `{ createTask: { title: "Go to Gym" } }`.
 3. The client sends `tools/call` to the MCP server, which runs it and returns the result to the LLM.
 
-(This is the tool-calling loop from note 5, with the tool definitions and execution moved behind a standard interface.)
+(This is the tool-calling loop from chapter 5, with the tool definitions and execution moved behind a standard interface.)
 
 ## The three things an MCP server can offer
 
@@ -46,7 +46,7 @@ flowchart LR
 | **Resources** | Data/content exposed as context | "I want my AI to **know** something" |
 | **Prompts** | Reusable instruction templates | "I want **reusable instructions** for AI" |
 
-Note 15 covers resources and prompts. (The notes link resources such as `refundPolicy`, `returnPolicy`, `payment` back to RAG-style knowledge.)
+Chapter 15 covers resources and prompts. (The chapters link resources such as `refundPolicy`, `returnPolicy`, `payment` back to RAG-style knowledge.)
 
 ## Transports
 
@@ -122,7 +122,7 @@ sequenceDiagram
 - "What problem does MCP solve?": the N apps x M tools integration problem, using one protocol.
 - "MCP vs a plain function-calling tool?": MCP standardises discovery, schema and transport, so tools are reusable across apps.
 - "Local vs remote MCP server?": STDIO for local processes; streamable HTTP for hosted services.
-- "Security?": MCP tool output and descriptions are untrusted input (see note 19).
+- "Security?": MCP tool output and descriptions are untrusted input (see chapter 19).
 
 ## Further reading
 

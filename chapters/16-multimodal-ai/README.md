@@ -32,7 +32,7 @@ Text path: `"cat" -> tokenizer -> token ID -> embedding -> [0.31, -0.18, 0.77, .
 
 How it learns: from **images paired with descriptions** ("This is a cat" with `cat.png`), so visual patterns line up with language concepts. The LLM supplies language concepts; the encoder supplies visual patterns.
 
-Same lesson as the word "bank" in note 2: context decides meaning, and here it applies across modalities.
+Same lesson as the word "bank" in chapter 2: context decides meaning, and here it applies across modalities.
 
 ## Building the app
 
@@ -92,7 +92,7 @@ sequenceDiagram
 
 - "How does an LLM 'see' an image?": split into patches, encode each into vectors, project into the language model's embedding space.
 - "Why not OCR everything?": loses layout, charts and non-text content.
-- "What to monitor in production?": cost, latency, privacy of uploaded images, prompt injection hidden in images (note 19).
+- "What to monitor in production?": cost, latency, privacy of uploaded images, prompt injection hidden in images (chapter 19).
 
 ## Further reading
 

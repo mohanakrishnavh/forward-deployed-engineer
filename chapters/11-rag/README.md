@@ -4,7 +4,7 @@
 
 ## Step 1: the model has no memory (so we add it)
 
-"My name is Aditya" then "What is my name?" fails if each call is independent. The server keeps the **history** (input and output messages) and resends it, as in note 4.
+"My name is Aditya" then "What is my name?" fails if each call is independent. The server keeps the **history** (input and output messages) and resends it, as in chapter 4.
 
 ## Step 2: how do we teach it the company's policies?
 
@@ -100,7 +100,7 @@ QUESTION: Can I return my order after 15 days?
 
 - "RAG vs fine-tuning?": RAG injects fresh, private knowledge at query time; fine-tuning changes model behaviour.
 - "Why not stuff all docs into the prompt?": cost, latency, context limits, distraction.
-- "What goes wrong in RAG?": bad chunking, wrong retrieval, stale index (note 12 fixes these).
+- "What goes wrong in RAG?": bad chunking, wrong retrieval, stale index (chapter 12 fixes these).
 
 ## Further reading
 

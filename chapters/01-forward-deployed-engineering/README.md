@@ -72,7 +72,7 @@ Fix: give the model the missing context together with the question:
 | The user's order status | Shipped, delivered, and when |
 | Previous conversation | What was already discussed with this user |
 
-With all of that in the prompt, the answer is accurate and phrased well. This is the seed of **RAG** and prompt/context design, which later notes cover.
+With all of that in the prompt, the answer is accurate and phrased well. This is the seed of **RAG** and prompt/context design, which later chapters cover.
 
 ### Takeaway
 

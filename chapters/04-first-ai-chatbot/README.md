@@ -33,7 +33,7 @@ The model can only see a limited number of tokens per call (system prompt + hist
 
 ## Hallucinations
 
-An LLM generates a plausible continuation, not a verified fact. With no company data it may invent a return policy. The system prompt narrows scope, but real grounding needs data in the prompt (see RAG in note 11).
+An LLM generates a plausible continuation, not a verified fact. With no company data it may invent a return policy. The system prompt narrows scope, but real grounding needs data in the prompt (see RAG in chapter 11).
 
 ## Picture it
 

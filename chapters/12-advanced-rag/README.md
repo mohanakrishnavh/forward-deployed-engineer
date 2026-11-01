@@ -113,7 +113,7 @@ flowchart LR
 - "Retrieval returns the wrong policy; how do you debug?": inspect chunks, add metadata filters, hybrid search, rerank, tune K and threshold.
 - "Why hybrid search?": embeddings miss exact identifiers; BM25 misses paraphrase.
 - "Bi-encoder vs cross-encoder?": bi-encoder embeds separately (fast, indexable); cross-encoder scores the pair jointly (accurate, slow).
-- "How do you decide chunk size?": by document structure and answer granularity; measure retrieval quality with evals (notes 17 and 18).
+- "How do you decide chunk size?": by document structure and answer granularity; measure retrieval quality with evals (chapters 17 and 18).
 
 ## Further reading
 

@@ -48,7 +48,7 @@ For a nicer reply, hand the retrieved movies to an LLM:
 - System prompt: "recommend movies from this list".
 - Query: "space sci-fi". Context: Movie1, Movie2 ... (Interstellar, Martian, Gravity).
 
-This is the **retrieve, then generate** pattern that becomes RAG (note 11).
+This is the **retrieve, then generate** pattern that becomes RAG (chapter 11).
 
 ### Other signals mentioned
 

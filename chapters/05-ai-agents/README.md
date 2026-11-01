@@ -124,7 +124,7 @@ sequenceDiagram
 
 - "What is an AI agent?": an LLM that uses tools in a loop toward a goal.
 - "How does tool calling actually work?": the model emits a structured request; the application runs the function and returns the result.
-- "How do you keep an agent safe?": minimal tools, sandboxed environment, approval for risky actions (see note 19).
+- "How do you keep an agent safe?": minimal tools, sandboxed environment, approval for risky actions (see chapter 19).
 
 ## Further reading
 

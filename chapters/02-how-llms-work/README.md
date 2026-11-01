@@ -2,9 +2,11 @@
 
 > **In plain words:** An LLM reads text as small pieces called tokens. It turns each token into numbers, lets the tokens look at each other (attention), and then guesses the next token. It repeats this again and again to write a full answer.
 
+> **Go deeper in this chapter:** [The Transformer, step by step (ELI5)](transformer-explained-simply.md) and ["Attention Is All You Need" explained simply](attention-is-all-you-need-explained.md).
+
 ## Core idea: an LLM predicts the next token
 
-Given the text so far, an LLM produces a **probability distribution over its vocabulary** for the next token, picks one, appends it, and repeats. "Capital of India is" gives Delhi 0.94, Kolkata 0.4 (raw scores), and so on. Everything else in this note explains how that distribution is produced.
+Given the text so far, an LLM produces a **probability distribution over its vocabulary** for the next token, picks one, appends it, and repeats. "Capital of India is" gives Delhi 0.94, Kolkata 0.4 (raw scores), and so on. Everything else in this chapter explains how that distribution is produced.
 
 ```mermaid
 flowchart LR

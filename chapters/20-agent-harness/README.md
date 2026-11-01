@@ -22,17 +22,17 @@ flowchart TD
   H --> R["Result for the user"]
 ```
 
-## How it connects to earlier notes
+## How it connects to earlier chapters
 
-| Part of the harness | What it does | Earlier note |
+| Part of the harness | What it does | Earlier chapter |
 |---|---|---|
-| Agent loop | Decide, act, observe, repeat | Note 5 |
-| Tools and MCP | Let the agent act in the real world | Notes 5, 14, 15 |
-| Memory and context window | Keep the right facts in view | Notes 4 and 11 |
-| Retrieval | Fetch facts the model does not have | Notes 11 and 12 |
-| Structured outputs | Make tool calls and results safe to parse | Note 13 |
-| Evals and traces | Measure and debug behaviour | Notes 17 and 18 |
-| Guardrails and approvals | Stop harmful actions | Note 19 |
+| Agent loop | Decide, act, observe, repeat | Chapter 5 |
+| Tools and MCP | Let the agent act in the real world | Chapters 5, 14, 15 |
+| Memory and context window | Keep the right facts in view | Chapters 4 and 11 |
+| Retrieval | Fetch facts the model does not have | Chapters 11 and 12 |
+| Structured outputs | Make tool calls and results safe to parse | Chapter 13 |
+| Evals and traces | Measure and debug behaviour | Chapters 17 and 18 |
+| Guardrails and approvals | Stop harmful actions | Chapter 19 |
 
 ## The loop in code form
 

@@ -34,7 +34,7 @@ Demos in the repo: Node.js, Python and **Java Spring Boot** (Spring AI `ChatClie
 | **No live data** | "What is the weather?" | **Weather API** tool |
 | **No execution** | Cannot run code | **Compiler** tool |
 
-So the application sits between the user and the model and can give the model tools. (Tools are covered in depth in note 5.)
+So the application sits between the user and the model and can give the model tools. (Tools are covered in depth in chapter 5.)
 
 ## The integration flow
 

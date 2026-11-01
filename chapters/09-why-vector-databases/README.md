@@ -49,7 +49,7 @@ At 1536 dimensions, pruning stops working. The careful statement:
 
 > It does not mean one extra dimension suddenly breaks search. It means every extra dimension adds more ways for points to differ and more regions that might contain a neighbour. As dimensions grow, we can safely eliminate less and less of the search space, until an exact structure ends up inspecting so much data that it behaves almost like **brute force**.
 
-So exact tree indexes do not rescue high-dimensional vector search. That motivates **approximate** methods (next note).
+So exact tree indexes do not rescue high-dimensional vector search. That motivates **approximate** methods (next chapter).
 
 ## Picture it
 
