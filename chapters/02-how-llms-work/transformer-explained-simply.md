@@ -2,6 +2,8 @@
 
 This is a plain-English walk through the Transformer. It follows the same order as Jay Alammar's famous article, [The Illustrated Transformer](https://jalammar.github.io/illustrated-transformer/). Read that article for the original pictures. Here the words, diagrams and examples are written again from scratch so that a beginner can follow.
 
+> **Find it hard? Start here:** [The Transformer by Example](transformer-by-example.md) follows one sentence through every step with small numbers and pictures. Come back to this page afterwards.
+>
 > **How to read this page.** Each step has three parts: **ELI5** (like you are five), **The real idea**, and a **picture**. If you only want the big idea, read the ELI5 parts.
 
 ## Contents

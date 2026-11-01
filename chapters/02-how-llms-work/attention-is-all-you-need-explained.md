@@ -4,6 +4,8 @@ This page explains the research paper [Attention Is All You Need](https://arxiv.
 
 It follows the paper's own section order, in plain words, with pictures and ELI5 ("explain like I am five") parts. All words and diagrams here are written from scratch. For the walk-through of how the model computes things, read the companion page: [The Transformer, step by step](transformer-explained-simply.md).
 
+> **Find it hard? Start here:** [The Transformer by Example](transformer-by-example.md) follows one sentence through the whole model with small numbers. Section 11 below also has quick examples for the paper's main ideas.
+>
 > **How to read this page.** Each section has **ELI5**, **The real idea** and a **picture**. If you are short on time, read only the ELI5 parts and the one-page summary at the end.
 
 ## Contents
@@ -18,7 +20,8 @@ It follows the paper's own section order, in plain words, with pictures and ELI5
 8. [What the experiments taught](#8-what-the-experiments-taught-model-variations)
 9. [Beyond translation: parsing](#9-beyond-translation-parsing)
 10. [Conclusion and what came next](#10-conclusion-and-what-came-next)
-11. [One-page summary and glossary](#11-one-page-summary-and-glossary)
+11. [Quick examples for the paper's main ideas](#11-quick-examples-for-the-papers-main-ideas)
+12. [One-page summary and glossary](#12-one-page-summary-and-glossary)
 
 ---
 
@@ -378,7 +381,100 @@ timeline
 
 ---
 
-## 11. One-page summary and glossary
+## 11. Quick examples for the paper's main ideas
+
+### Example 1: why "one hop" matters
+
+Sentence: *"The cat that my neighbour adopted last week drank the milk."* Which word is the subject of "drank"? It is "cat", five words earlier.
+
+| Model | How "drank" reaches "cat" | Hops |
+|---|---|---|
+| Recurrent (old) | cat to that to my to neighbour to adopted to last to week to drank | many, and the message may blur |
+| Convolution (window of 3) | Needs several layers to widen the window | a few layers |
+| **Self-attention** | "drank" looks straight at "cat" | **1** |
+
+```mermaid
+flowchart LR
+  subgraph OLD["Recurrent: pass it along"]
+    direction LR
+    a1["cat"] --> a2["that"] --> a3["my"] --> a4["neighbour"] --> a5["adopted"] --> a6["drank"]
+  end
+  subgraph NEW["Self-attention: look directly"]
+    direction LR
+    b1["cat"] -. "1 hop" .-> b6["drank"]
+  end
+```
+
+### Example 2: why the paper divides by sqrt(d_k)
+
+Three scores 8, 16, 24 (typical when vectors are long):
+
+| | Softmax without dividing | Softmax after dividing by 8 |
+|---|---|---|
+| Result | 0.0000, 0.0003, **0.9997** | 0.09, 0.24, **0.67** |
+| Meaning | Winner takes all, almost no learning signal | Healthy spread, the model keeps learning |
+
+### Example 3: what a position sticker looks like
+
+The paper's waves give each position its own fingerprint (4-number toy version):
+
+| Position | Sticker |
+|---|---|
+| 0 | 0.00, 1.00, 0.00, 1.00 |
+| 1 | 0.84, 0.54, 0.01, 1.00 |
+| 2 | 0.91, -0.42, 0.02, 1.00 |
+| 3 | 0.14, -0.99, 0.03, 1.00 |
+
+The first pair moves fast, the second pair moves slowly. Like a clock: seconds hand and minutes hand together tell the exact time.
+
+### Example 4: reading a BLEU score
+
+BLEU compares a machine translation with a human one. A tiny version, counting matching words:
+
+| | Text |
+|---|---|
+| Human translation | the cat sat on the mat |
+| Machine translation | the cat is on the mat |
+| Matching words | the, cat, on, the, mat = 5 of 6 |
+| Simple match score | 5 / 6 = 0.83 |
+
+Real BLEU also checks matching word groups (two, three and four words long) and is shown out of 100. A BLEU of **28.4** (English to German) and **41.8** (English to French) were new records in 2017.
+
+### Example 5: warm-up learning rate
+
+| Step | Learning rate | Why |
+|---|---|---|
+| 1 | almost 0 | The model is new; take tiny careful steps |
+| 1,000 | 0.00017 | Speeding up |
+| 4,000 | **0.00070 (peak)** | Full speed |
+| 16,000 | 0.00035 | Slowing to fine-tune |
+| 100,000 | 0.00014 | Small changes at the end |
+
+### Example 6: the mask while writing "I am a student"
+
+| Writing | Allowed to see |
+|---|---|
+| I | I |
+| am | I, am |
+| a | I, am, a |
+| student | I, am, a, student |
+
+Future words are hidden, so the model has to predict, not copy.
+
+### Example 7: choosing 8 heads
+
+| Heads | Effect on translation quality (paper's test) |
+|---|---|
+| 1 | About 0.9 BLEU worse than the best |
+| 8 | Good (the paper's choice) |
+| 16 | About the same as 8 |
+| 32 | A little worse again |
+
+Too few heads: one narrow view. Too many: each head becomes too small to be useful.
+
+---
+
+## 12. One-page summary and glossary
 
 ### Summary in 8 lines
 
